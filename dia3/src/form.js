@@ -11,7 +11,7 @@ const nameInput = document.querySelector("[data-js='inputName']");
 nameInput.addEventListener(
   "input",
   (e) => {
-    e.target.value = masks.nome(text);
+    e.target.value = masks.nome(e.target.value);
   },
   false
 );
