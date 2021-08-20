@@ -1,17 +1,25 @@
+const prepositions = ["da", "das", "de", "do", "dos"];
 const masks = {
   nome(value) {
     return value
       .toLowerCase()
-      .replace(/(?:^|\s)\S/g, (upper) => upper.toUpperCase());
+      .replace(/(?:^|\s)\S/g, (word) => word.toUpperCase());
   },
 };
 
-const nameInput = document.querySelector("[data-js='inputName']");
+const $ = (selector) => document.querySelector(selector);
 
-nameInput.addEventListener(
-  "input",
-  (e) => {
-    e.target.value = masks.nome(e.target.value);
-  },
-  false
-);
+const nameInput = $("[data-js='inputName']");
+
+nameInput.addEventListener("input", (e) => {
+  const wordsAsArray = e.target.value.split(" ");
+  e.target.value = wordsAsArray
+    .map((word) => verifyPreposition(word))
+    .join(" ");
+});
+
+const verifyPreposition = (word) => {
+  return prepositions.includes(word.toLowerCase())
+    ? word.toLowerCase()
+    : masks.nome(word);
+};
