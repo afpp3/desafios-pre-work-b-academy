@@ -1,4 +1,5 @@
 import "./style.css";
+import { get, post } from "./http.js";
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => document.querySelectorAll(selector);
@@ -6,7 +7,7 @@ const $$ = (selector) => document.querySelectorAll(selector);
 const form = $('[data-js="cars-form"]');
 const table = $('[data-js="cars-table"]');
 
-const baseURL = "http://localhost:3333";
+const baseURL = "http://localhost:3333/cars";
 
 const getFormElement = (event) => (elementName) => {
   return event.target.elements[elementName];
@@ -46,7 +47,7 @@ const elementsTypes = {
   color: createElementByType.createColor,
 };
 
-form.addEventListener("submit", (e) => {
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const getElement = getFormElement(e);
 
@@ -58,13 +59,24 @@ form.addEventListener("submit", (e) => {
     color: getElement("color").value,
   };
 
+  const result = await post(baseURL, data);
+  const hasError = result.error;
+
+  if (hasError) {
+    showError(result.message);
+    return;
+  }
+
+  const noContent = $('[data-js="no-content"]');
+  table.removeChild(noContent);
+
   createTableRow(data);
 
   e.target.reset();
   image.focus();
 });
 
-function createTableRow(data) {
+const createTableRow = (data) => {
   const elements = [
     { type: "image", value: { src: data.image, alt: data.brandModel } },
     { type: "text", value: data.brandModel },
@@ -81,26 +93,33 @@ function createTableRow(data) {
   });
 
   table.appendChild(tr);
-}
+};
 
-function createNoCarRow() {
+const createNoCarRow = () => {
   const tr = document.createElement("tr");
   const td = document.createElement("td");
   const thsLength = $$("table th").length;
   td.setAttribute("colspan", thsLength);
   td.textContent = "Nenhum carro encontrado";
 
+  tr.dataset.js = "no-content";
   tr.appendChild(td);
   table.appendChild(tr);
-}
+};
+
+const showError = (errorMessage) => {
+  console.log("Erro ao cadastrar:", errorMessage);
+  const error = $('[data-js="error"]');
+  error.classList.remove("hide");
+  error.textContent = errorMessage;
+};
 
 const main = async () => {
-  const result = await fetch(`${baseURL}/cars`)
-    .then((r) => r.json())
-    .catch((e) => ({ error: true, message: e.message }));
+  const result = await get(baseURL);
+  const hasError = result.error;
 
-  if (result.error) {
-    console.log("Erro ao buscar carros", result.message);
+  if (hasError) {
+    showError(result.message);
     return;
   }
 

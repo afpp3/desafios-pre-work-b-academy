@@ -14,3 +14,17 @@ label {
 form {
   margin-bottom: 40px;
 }
+
+form button,
+form label {
+  margin-top: 10px;
+}
+
+.error-message {
+  margin: 20px 0;
+  color: orangered;
+}
+
+.error-message.hide {
+  display: none;
+}

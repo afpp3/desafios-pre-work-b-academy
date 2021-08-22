@@ -11,30 +11,31 @@
       <form data-js="cars-form">
         <div>
           <label for="image">Image(URl)</label>
-          <input type="text" name="image" id="image" />
+          <input required type="text" name="image" id="image" />
         </div>
 
         <div>
           <label for="brand-model">Marca / Modelo</label>
-          <input type="text" name="brand-model" id="brand-model" />
+          <input required type="text" name="brand-model" id="brand-model" />
         </div>
 
         <div>
           <label for="year">Ano</label>
-          <input type="number" name="year" id="year" />
+          <input required type="number" name="year" id="year" />
         </div>
 
         <div>
           <label for="plate">Placa</label>
-          <input type="text" name="plate" id="placa" />
+          <input required type="text" name="plate" id="placa" />
         </div>
 
         <div>
           <label for="color">Cor</label>
-          <input type="color" name="color" id="color" />
+          <input required type="color" name="color" id="color" />
         </div>
 
         <button type="submit">Cadastrar</button>
+        <div class="error-message hide" data-js="error"></div>
       </form>
 
       <table border="1">
