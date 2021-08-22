@@ -1,5 +1,5 @@
 import "./style.css";
-import { get, post } from "./http.js";
+import { get, post, del } from "./http.js";
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => document.querySelectorAll(selector);
@@ -68,7 +68,9 @@ form.addEventListener("submit", async (e) => {
   }
 
   const noContent = $('[data-js="no-content"]');
-  table.removeChild(noContent);
+  if (noContent) {
+    table.removeChild(noContent);
+  }
 
   createTableRow(data);
 
@@ -86,13 +88,44 @@ const createTableRow = (data) => {
   ];
 
   const tr = document.createElement("tr");
+  tr.dataset.plate = data.plate;
 
   elements.forEach((element) => {
     const td = elementsTypes[element.type](element.value);
     tr.appendChild(td);
   });
 
+  const button = document.createElement("button");
+  button.textContent = "Excluir";
+  button.dataset.plate = data.plate;
+
+  button.addEventListener("click", handleDelete);
+
+  tr.appendChild(button);
+
   table.appendChild(tr);
+};
+
+const handleDelete = async (e) => {
+  const button = e.target;
+  const plate = button.dataset.plate;
+
+  const result = await del(baseURL, { plate });
+  const hasError = result.error;
+
+  if (hasError) {
+    showError(result.message);
+    return;
+  }
+
+  const tr = document.querySelector(`tr[data-plate="${plate}"]`);
+  table.removeChild(tr);
+  button.removeEventListener("click", handleDelete);
+
+  const allTrs = table.querySelector("tr");
+  if (!allTrs) {
+    createNoCarRow();
+  }
 };
 
 const createNoCarRow = () => {

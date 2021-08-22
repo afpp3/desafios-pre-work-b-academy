@@ -20,6 +20,10 @@ form label {
   margin-top: 10px;
 }
 
+table {
+  text-align: center;
+}
+
 .error-message {
   margin: 20px 0;
   color: orangered;
